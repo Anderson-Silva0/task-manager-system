@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   postgres-user:
     image: postgres:15
@@ -44,6 +46,8 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-user:5432/userdb
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: postgres
+      SERVICES_TASK_URL: http://task-service:8080
+      SPRING_CLOUD_FEIGN_OKHTTP_ENABLED: "false"
     depends_on:
       - postgres-user
     networks:
@@ -60,8 +64,11 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-task:5432/taskdb
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: postgres
+      SERVICES_USER_URL: http://user-service:8080
+      SPRING_CLOUD_FEIGN_OKHTTP_ENABLED: "false"
     depends_on:
       - postgres-task
+      - user-service
     networks:
       - backend
 

@@ -1,4 +1,6 @@
 spring:
+  application:
+    name: task-service
   datasource:
     url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/taskdb}
     username: ${SPRING_DATASOURCE_USERNAME:postgres}
@@ -9,5 +11,8 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+  cloud:
+    compatibility-verifier:
+      enabled: false
 server:
   port: 8080

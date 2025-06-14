@@ -1,5 +1,6 @@
 package com.andersonsilva.userservice.application.service;
 
+import com.andersonsilva.userservice.adapter.outbound.client.TaskClient;
 import com.andersonsilva.userservice.adapter.outbound.persistence.UserRepository;
 import com.andersonsilva.userservice.domain.UserEntity;
 import jakarta.persistence.EntityNotFoundException;
@@ -13,8 +14,11 @@ public class UserService {
 
     private final UserRepository repository;
 
-    public UserService(UserRepository userRepository) {
+    private final TaskClient taskClient;
+
+    public UserService(UserRepository userRepository, TaskClient taskClient) {
         this.repository = userRepository;
+        this.taskClient = taskClient;
     }
 
     public List<UserEntity> findAll() {
@@ -56,7 +60,12 @@ public class UserService {
     @Transactional
     public void deleteUser(Long id) {
         UserEntity user = findById(id);
-        // TODO: checar tarefas associadas antes de deletar
+
+        long taskCount = taskClient.countTasksByUserId(id);
+        if (taskCount > 0) {
+            throw new IllegalStateException("Usuário possui tarefas associadas e não pode ser deletado.");
+        }
+
         repository.delete(user);
     }
 
