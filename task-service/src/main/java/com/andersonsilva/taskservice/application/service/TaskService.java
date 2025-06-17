@@ -52,7 +52,6 @@ public class TaskService {
                 .title(title)
                 .description(description)
                 .status(TaskStatus.PENDENTE)
-                .createdAt(LocalDateTime.now())
                 .deadline(deadline)
                 .build();
         return repository.save(task);

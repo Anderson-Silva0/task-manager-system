@@ -11,9 +11,15 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+
   cloud:
     compatibility-verifier:
       enabled: false
+    openfeign:
+      client:
+        config:
+          user-service:
+            url: ${SERVICES_USER_URL:http://user-service:8081}
 
 server:
   port: 8080

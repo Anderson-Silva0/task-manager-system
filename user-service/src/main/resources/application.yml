@@ -11,9 +11,15 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+
   cloud:
     compatibility-verifier:
       enabled: false
+    openfeign:
+      client:
+        config:
+          task-service:
+            url: ${SERVICES_TASK_URL:http://task-service:8081}
 
 server:
   port: 8080
