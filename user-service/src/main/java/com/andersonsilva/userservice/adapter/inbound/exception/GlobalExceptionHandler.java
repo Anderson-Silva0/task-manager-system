@@ -7,7 +7,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -46,23 +45,12 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(ResponseStatusException.class)
-    public ResponseEntity<ErrorResponse> handleResponseStatusException(ResponseStatusException ex) {
-        ErrorResponse response = new ErrorResponse(
-                LocalDateTime.now(),
-                ex.getStatusCode().value(),
-                ex.getReason(),
-                List.of(ex.getReason())
-        );
-        return new ResponseEntity<>(response, ex.getStatusCode());
-    }
-
     @ExceptionHandler({IllegalArgumentException.class, IllegalStateException.class})
-    public ResponseEntity<ErrorResponse> handleBadRequest(RuntimeException ex) {
+    public ResponseEntity<ErrorResponse> handleInvalidRequest(RuntimeException ex) {
         ErrorResponse response = new ErrorResponse(
                 LocalDateTime.now(),
                 HttpStatus.BAD_REQUEST.value(),
-                "Bad Request",
+                "Invalid Request",
                 List.of(ex.getMessage())
         );
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);

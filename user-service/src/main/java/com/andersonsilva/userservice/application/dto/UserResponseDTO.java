@@ -8,6 +8,6 @@ public record UserResponseDTO(
         Long id,
         String name,
         String email,
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy HH:mm:ss", timezone = "America/Recife")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy HH:mm:ss")
         LocalDateTime createdAt
 ) {}
