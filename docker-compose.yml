@@ -50,6 +50,12 @@ services:
       SPRING_CLOUD_FEIGN_OKHTTP_ENABLED: "false"
     depends_on:
       - postgres-user
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/api/users"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
     networks:
       - backend
 
@@ -69,8 +75,64 @@ services:
     depends_on:
       - postgres-task
       - user-service
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/api/tasks"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
     networks:
       - backend
+
+  task-manager-ui:
+    build:
+      context: ./task-manager-ui
+      dockerfile: Dockerfile
+    container_name: angular-app
+    ports:
+      - "4200:4200"
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - ./task-manager-ui/src:/app/src
+      - ./task-manager-ui/package.json:/app/package.json
+      - ./task-manager-ui/angular.json:/app/angular.json
+      - ./task-manager-ui/tsconfig.json:/app/tsconfig.json
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4200"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 60s
+    depends_on:
+      task-service:
+        condition: service_started
+      user-service:
+        condition: service_started
+
+  cypress:
+    build:
+      context: ./task-manager-ui
+      dockerfile: Dockerfile.cypress
+    container_name: cypress-tests
+    depends_on:
+      task-manager-ui:
+        condition: service_healthy
+      task-service:
+        condition: service_healthy
+      user-service:
+        condition: service_healthy
+    environment:
+      - CYPRESS_baseUrl=http://task-manager-ui:4200
+    volumes:
+      - ./task-manager-ui/cypress:/app/cypress
+      - ./task-manager-ui/cypress.config.js:/app/cypress.config.js
+      - ./task-manager-ui/cypress-results:/app/cypress-results
+    networks:
+      - backend
+    command: sh -c "npx wait-on -t 60000 http://task-manager-ui:4200 && npx wait-on -t 60000 http://user-service:8080 && npx wait-on -t 60000 http://task-service:8080 && sleep 15 && npx cypress run --spec 'cypress/e2e/**/*.cy.js' --reporter junit --reporter-options 'mochaFile=cypress-results/results.xml,toConsole=true'"
 
 volumes:
   user-db-data:
