@@ -1,10 +1,12 @@
-package com.andersonsilva.taskservice.application.service;
+package com.andersonsilva.taskservice.application.service.impl;
 
 import com.andersonsilva.taskservice.adapter.outbound.client.UserClient;
 import com.andersonsilva.taskservice.adapter.outbound.persistence.TaskRepository;
+import com.andersonsilva.taskservice.application.service.ITaskService;
 import com.andersonsilva.taskservice.domain.TaskEntity;
 import com.andersonsilva.taskservice.domain.TaskStatus;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,16 +14,15 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
-public class TaskService {
+public class TaskServiceImpl implements ITaskService {
 
-    private final TaskRepository repository;
-    private final UserClient userClient;
+    @Autowired
+    private TaskRepository repository;
 
-    public TaskService(TaskRepository repository, UserClient userClient) {
-        this.repository = repository;
-        this.userClient = userClient;
-    }
+    @Autowired
+    private UserClient userClient;
 
+    @Override
     public List<TaskEntity> findTasksByStatusAndUserId(TaskStatus status, Long userId) {
         if (status != null && userId != null) {
             return repository.findByStatusAndUserId(status, userId);
@@ -34,11 +35,13 @@ public class TaskService {
         }
     }
 
+    @Override
     public TaskEntity findById(Long id) {
         return repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Tarefa não encontrada"));
     }
 
+    @Override
     @Transactional
     public TaskEntity createTask(Long userId, String title, String description, LocalDateTime deadline) {
         try {
@@ -57,6 +60,7 @@ public class TaskService {
         return repository.save(task);
     }
 
+    @Override
     @Transactional
     public TaskEntity updateTask(Long id, String title, String description, TaskStatus status, LocalDateTime deadline) {
         TaskEntity task = findById(id);
@@ -79,12 +83,14 @@ public class TaskService {
         return repository.save(task);
     }
 
+    @Override
     @Transactional
     public void deleteTask(Long id) {
         TaskEntity task = findById(id);
         repository.delete(task);
     }
 
+    @Override
     public long countTasksByUserId(Long userId) {
         return repository.countByUserId(userId);
     }

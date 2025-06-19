@@ -2,31 +2,19 @@ package com.andersonsilva.userservice.adapter.inbound.controller;
 
 import com.andersonsilva.userservice.application.dto.UserRequestDTO;
 import com.andersonsilva.userservice.application.dto.UserResponseDTO;
-import com.andersonsilva.userservice.application.service.UserService;
-import com.andersonsilva.userservice.domain.UserEntity;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @Tag(name = "Users", description = "APIs para gerenciamento de usuários")
-@RestController
 @RequestMapping("/api/users")
-public class UserController {
-
-    private final UserService service;
-    private final ModelMapper mapper;
-
-    public UserController(UserService service, ModelMapper mapper) {
-        this.service = service;
-        this.mapper = mapper;
-    }
+public interface IUserController {
 
     @Operation(
             summary = "Listar todos os usuários",
@@ -36,13 +24,7 @@ public class UserController {
             }
     )
     @GetMapping
-    public ResponseEntity<List<UserResponseDTO>> getAll() {
-        List<UserResponseDTO> list = service.findAll()
-                .stream()
-                .map(user -> mapper.map(user, UserResponseDTO.class))
-                .toList();
-        return ResponseEntity.ok(list);
-    }
+    ResponseEntity<List<UserResponseDTO>> getAll();
 
     @Operation(
             summary = "Obter usuário por ID",
@@ -53,13 +35,10 @@ public class UserController {
             }
     )
     @GetMapping("/{id}")
-    public ResponseEntity<UserResponseDTO> getById(
+    ResponseEntity<UserResponseDTO> getById(
             @Parameter(description = "ID do usuário", required = true)
             @PathVariable Long id
-    ) {
-        UserEntity user = service.findById(id);
-        return ResponseEntity.ok(mapper.map(user, UserResponseDTO.class));
-    }
+    );
 
     @Operation(
             summary = "Criar novo usuário",
@@ -73,12 +52,9 @@ public class UserController {
             description = "Conteúdo do usuário a ser criado", required = true
     )
     @PostMapping
-    public ResponseEntity<UserResponseDTO> create(
+    ResponseEntity<UserResponseDTO> create(
             @Valid @RequestBody UserRequestDTO dto
-    ) {
-        UserEntity created = service.createUser(dto.name(), dto.email());
-        return ResponseEntity.status(201).body(mapper.map(created, UserResponseDTO.class));
-    }
+    );
 
     @Operation(
             summary = "Atualizar usuário existente",
@@ -93,14 +69,11 @@ public class UserController {
             description = "Novos dados do usuário", required = true
     )
     @PutMapping("/{id}")
-    public ResponseEntity<UserResponseDTO> update(
+    ResponseEntity<UserResponseDTO> update(
             @Parameter(description = "ID do usuário a ser atualizado", required = true)
             @PathVariable Long id,
             @Valid @RequestBody UserRequestDTO dto
-    ) {
-        UserEntity updated = service.updateUser(id, dto.name(), dto.email());
-        return ResponseEntity.ok(mapper.map(updated, UserResponseDTO.class));
-    }
+    );
 
     @Operation(
             summary = "Excluir usuário",
@@ -112,12 +85,9 @@ public class UserController {
             }
     )
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(
+    ResponseEntity<Void> delete(
             @Parameter(description = "ID do usuário a ser excluído", required = true)
             @PathVariable Long id
-    ) {
-        service.deleteUser(id);
-        return ResponseEntity.noContent().build();
-    }
+    );
 
 }

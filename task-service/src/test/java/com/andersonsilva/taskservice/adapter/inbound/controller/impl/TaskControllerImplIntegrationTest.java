@@ -1,4 +1,4 @@
-package com.andersonsilva.taskservice.adapter.inbound.controller;
+package com.andersonsilva.taskservice.adapter.inbound.controller.impl;
 
 import com.andersonsilva.taskservice.adapter.outbound.client.UserClient;
 import com.andersonsilva.taskservice.adapter.outbound.persistence.TaskRepository;
@@ -28,7 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-class TaskControllerIntegrationTest {
+class TaskControllerImplIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;

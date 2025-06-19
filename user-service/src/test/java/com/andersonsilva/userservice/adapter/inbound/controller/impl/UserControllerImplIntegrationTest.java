@@ -1,4 +1,4 @@
-package com.andersonsilva.userservice.adapter.inbound.controller;
+package com.andersonsilva.userservice.adapter.inbound.controller.impl;
 
 import com.andersonsilva.userservice.adapter.outbound.persistence.UserRepository;
 import com.andersonsilva.userservice.domain.UserEntity;
@@ -22,7 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-class UserControllerIntegrationTest {
+class UserControllerImplIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;

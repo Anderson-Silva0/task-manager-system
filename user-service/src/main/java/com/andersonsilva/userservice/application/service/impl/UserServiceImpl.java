@@ -1,35 +1,37 @@
-package com.andersonsilva.userservice.application.service;
+package com.andersonsilva.userservice.application.service.impl;
 
 import com.andersonsilva.userservice.adapter.outbound.client.TaskClient;
 import com.andersonsilva.userservice.adapter.outbound.persistence.UserRepository;
+import com.andersonsilva.userservice.application.service.IUserService;
 import com.andersonsilva.userservice.domain.UserEntity;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
-public class UserService {
+public class UserServiceImpl implements IUserService {
 
-    private final UserRepository repository;
+    @Autowired
+    private UserRepository repository;
 
-    private final TaskClient taskClient;
+    @Autowired
+    private TaskClient taskClient;
 
-    public UserService(UserRepository userRepository, TaskClient taskClient) {
-        this.repository = userRepository;
-        this.taskClient = taskClient;
-    }
-
+    @Override
     public List<UserEntity> findAll() {
         return repository.findAll();
     }
 
+    @Override
     public UserEntity findById(Long id) {
         return repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado"));
     }
 
+    @Override
     @Transactional
     public UserEntity createUser(String name, String email) {
         if (repository.existsByEmail(email)) {
@@ -43,6 +45,7 @@ public class UserService {
         return repository.save(user);
     }
 
+    @Override
     @Transactional
     public UserEntity updateUser(Long id, String name, String email) {
         UserEntity user = findById(id);
@@ -57,6 +60,7 @@ public class UserService {
         return repository.save(user);
     }
 
+    @Override
     @Transactional
     public void deleteUser(Long id) {
         UserEntity user = findById(id);

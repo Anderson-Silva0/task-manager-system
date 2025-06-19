@@ -1,4 +1,4 @@
-package com.andersonsilva.userservice.application.service;
+package com.andersonsilva.userservice.application.service.impl;
 
 import com.andersonsilva.userservice.adapter.outbound.client.TaskClient;
 import com.andersonsilva.userservice.adapter.outbound.persistence.UserRepository;
@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class UserServiceTest {
+class UserServiceImplTest {
 
     @Mock
     private UserRepository repository;
@@ -29,7 +29,7 @@ class UserServiceTest {
     private TaskClient taskClient;
     
     @InjectMocks
-    private UserService service;
+    private UserServiceImpl service;
 
     private UserEntity userEntity;
 
