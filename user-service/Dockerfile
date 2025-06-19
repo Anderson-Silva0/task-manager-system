@@ -6,7 +6,7 @@ RUN mvn dependency:go-offline
 
 COPY src ./src
 
-RUN mvn clean package -Dspring.profiles.active=test
+RUN mvn clean package -Dspring.profiles.active=test --no-transfer-progress
 
 FROM eclipse-temurin:17-jdk
 WORKDIR /app
