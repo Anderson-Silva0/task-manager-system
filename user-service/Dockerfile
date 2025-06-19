@@ -11,7 +11,7 @@ RUN mvn clean package -Dspring.profiles.active=test --no-transfer-progress
 FROM eclipse-temurin:17-jdk
 WORKDIR /app
 
-COPY --from=build /app/target/user-service-1.0.0.jar app.jar
+COPY --from=build /app/target/*.jar app.jar
 
 EXPOSE 8080
 ENTRYPOINT ["java", "-Duser.timezone=America/Recife", "-jar", "app.jar"]
