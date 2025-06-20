@@ -70,9 +70,11 @@ Este README mostra como clonar e executar o sistema completo (backend + frontend
 
 ------
 
-## 📝 Endpoints e Swagger UI
+## 🌐 URLs de Acesso ao Sistema
 
 Após subir os containers, acesse as interfaces de documentação:
+
+- **Frontend Angular**: http://localhost:4200/
 
 - **User Service Swagger UI**: http://localhost:8081/swagger-ui/index.html
 - **Task Service Swagger UI**: http://localhost:8082/swagger-ui/index.html
