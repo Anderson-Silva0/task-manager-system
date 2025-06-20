@@ -72,14 +72,12 @@ Este README mostra como clonar e executar o sistema completo (backend + frontend
 
 ## 🌐 URLs de Acesso ao Sistema
 
-Após subir os containers, acesse as interfaces de documentação:
+Após iniciar os containers via Docker Compose, abra no navegador:
 
 - **Frontend Angular**: http://localhost:4200/
 
 - **User Service Swagger UI**: http://localhost:8081/swagger-ui/index.html
 - **Task Service Swagger UI**: http://localhost:8082/swagger-ui/index.html
-
-A documentação de endpoints detalhados está disponível nesses links acima.
 
 ------
 
