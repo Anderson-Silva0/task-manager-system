@@ -4,7 +4,7 @@ Bem-vindo ao Task Manager System! 🚀
 
 **Sistema de gerenciamento de tarefas com microsserviços em Spring Boot, Swagger, PostgreSQL, testes automatizados e Docker. Back end do sistema Task Manager.**
 
-Este repositório contém o backend com dois microservices (`user-service` e `task-service`). O frontend está em outro repositório e deve ser clonado dentro deste para execução via Docker Compose.
+Este repositório contém o backend com dois microservices (**user-service** e **task-service**, ambos localizados na mesma pasta para facilitar a execução do projeto). O frontend está em outro repositório e deve ser clonado dentro deste para execução via Docker Compose.
 
 🚀 **Visão Geral**
 
