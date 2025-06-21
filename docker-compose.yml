@@ -14,9 +14,10 @@ services:
       - backend
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d userdb"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
+      interval: 10s
+      timeout: 10s
+      retries: 10
+      start_period: 60s
 
   postgres-task:
     image: postgres:15
@@ -31,9 +32,10 @@ services:
       - backend
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d taskdb"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
+      interval: 10s
+      timeout: 10s
+      retries: 10
+      start_period: 60s
 
   user-service:
     build:
@@ -52,10 +54,10 @@ services:
       - postgres-user
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/api/users"]
-      interval: 10s
-      timeout: 5s
+      interval: 30s
+      timeout: 20s
       retries: 5
-      start_period: 60s
+      start_period: 180s
     networks:
       - backend
 
@@ -77,10 +79,10 @@ services:
       - user-service
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/api/tasks"]
-      interval: 10s
-      timeout: 5s
+      interval: 30s
+      timeout: 20s
       retries: 5
-      start_period: 30s
+      start_period: 120s
     networks:
       - backend
 
