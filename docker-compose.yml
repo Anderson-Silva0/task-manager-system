@@ -93,7 +93,7 @@ services:
     build:
       context: ./task-manager-ui
       dockerfile: Dockerfile
-    container_name: angular-app
+    container_name: task-manager-ui
     ports:
       - "4200:4200"
     environment:
