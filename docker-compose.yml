@@ -10,14 +10,14 @@ services:
       POSTGRES_DB: userdb
     volumes:
       - user-db-data:/var/lib/postgresql/data
-    networks:
-      - backend
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d userdb"]
       interval: 10s
       timeout: 10s
       retries: 10
       start_period: 60s
+    networks:
+      - backend
 
   postgres-task:
     image: postgres:15
@@ -28,14 +28,14 @@ services:
       POSTGRES_DB: taskdb
     volumes:
       - task-db-data:/var/lib/postgresql/data
-    networks:
-      - backend
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d taskdb"]
       interval: 10s
       timeout: 10s
       retries: 10
       start_period: 60s
+    networks:
+      - backend
 
   user-service:
     build:
@@ -51,7 +51,8 @@ services:
       SERVICES_TASK_URL: http://task-service:8080
       SPRING_CLOUD_FEIGN_OKHTTP_ENABLED: "false"
     depends_on:
-      - postgres-user
+      postgres-user:
+        condition: service_healthy
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/api/users"]
       interval: 30s
@@ -75,8 +76,10 @@ services:
       SERVICES_USER_URL: http://user-service:8080
       SPRING_CLOUD_FEIGN_OKHTTP_ENABLED: "false"
     depends_on:
-      - postgres-task
-      - user-service
+      postgres-task:
+        condition: service_healthy
+      user-service:
+        condition: service_healthy
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/api/tasks"]
       interval: 30s
@@ -100,8 +103,6 @@ services:
       - ./task-manager-ui/package.json:/app/package.json
       - ./task-manager-ui/angular.json:/app/angular.json
       - ./task-manager-ui/tsconfig.json:/app/tsconfig.json
-    networks:
-      - backend
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:4200"]
       interval: 10s
@@ -110,9 +111,11 @@ services:
       start_period: 60s
     depends_on:
       task-service:
-        condition: service_started
+        condition: service_healthy
       user-service:
-        condition: service_started
+        condition: service_healthy
+    networks:
+      - backend
 
   cypress:
     build:
@@ -134,7 +137,7 @@ services:
       - ./task-manager-ui/cypress-results:/app/cypress-results
     networks:
       - backend
-    command: sh -c "npx wait-on -t 60000 http://task-manager-ui:4200 && npx wait-on -t 60000 http://user-service:8080 && npx wait-on -t 60000 http://task-service:8080 && sleep 15 && npx cypress run --spec 'cypress/e2e/**/*.cy.js' --reporter junit --reporter-options 'mochaFile=cypress-results/results.xml,toConsole=true'"
+    command: sh -c "npx wait-on -t 120000 http://task-manager-ui:4200 && npx wait-on -t 60000 http://user-service:8080 && npx wait-on -t 60000 http://task-service:8080 && sleep 15 && npx cypress run --spec 'cypress/e2e/**/*.cy.js' --reporter junit --reporter-options 'mochaFile=cypress-results/results.xml,toConsole=true'"
 
 volumes:
   user-db-data:
