@@ -29,6 +29,7 @@ public class TaskControllerImpl implements ITaskController {
         this.mapper = mapper;
     }
 
+    @Override
     @Operation(
             summary = "Listar tarefas",
             description = "Retorna todas as tarefas, com filtros opcionais por status e usuário responsável",
@@ -51,6 +52,7 @@ public class TaskControllerImpl implements ITaskController {
         return ResponseEntity.ok(tasks);
     }
 
+    @Override
     @Operation(
             summary = "Obter tarefa por ID",
             description = "Busca uma tarefa específica pelo seu identificador",
@@ -68,6 +70,7 @@ public class TaskControllerImpl implements ITaskController {
         return ResponseEntity.ok(dto);
     }
 
+    @Override
     @Operation(
             summary = "Criar nova tarefa",
             description = "Registra uma nova tarefa associada a um usuário existente",
@@ -91,6 +94,7 @@ public class TaskControllerImpl implements ITaskController {
         return ResponseEntity.status(201).body(response);
     }
 
+    @Override
     @Operation(
             summary = "Atualizar tarefa",
             description = "Altera os dados de uma tarefa existente, exceto se estiver concluída",
@@ -117,6 +121,7 @@ public class TaskControllerImpl implements ITaskController {
         return ResponseEntity.ok(response);
     }
 
+    @Override
     @Operation(
             summary = "Remover tarefa",
             description = "Exclui a tarefa identificada pelo ID (sem corpo de resposta)",
@@ -134,6 +139,7 @@ public class TaskControllerImpl implements ITaskController {
         return ResponseEntity.noContent().build();
     }
 
+    @Override
     @Operation(
             summary = "Contar tarefas por usuário",
             description = "Retorna a quantidade de tarefas associadas a um determinado usuário",
