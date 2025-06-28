@@ -5,7 +5,6 @@ import com.andersonsilva.userservice.adapter.outbound.persistence.UserRepository
 import com.andersonsilva.userservice.application.service.IUserService;
 import com.andersonsilva.userservice.domain.UserEntity;
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,11 +13,14 @@ import java.util.List;
 @Service
 public class UserServiceImpl implements IUserService {
 
-    @Autowired
-    private UserRepository repository;
+    private final UserRepository repository;
 
-    @Autowired
-    private TaskClient taskClient;
+    private final TaskClient taskClient;
+
+    public UserServiceImpl(UserRepository repository, TaskClient taskClient) {
+        this.repository = repository;
+        this.taskClient = taskClient;
+    }
 
     @Override
     public List<UserEntity> findAll() {
