@@ -1,8 +1,9 @@
 package com.andersonsilva.taskservice.domain;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
@@ -11,9 +12,6 @@ import java.time.LocalDateTime;
 @Table(name = "tasks")
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
-@EqualsAndHashCode
 @Builder
 public class TaskEntity {
 
@@ -21,7 +19,6 @@ public class TaskEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
     private String title;
 
     private String description;
@@ -38,12 +35,5 @@ public class TaskEntity {
 
     @Column(nullable = false)
     private Long userId;
-
-    @PrePersist
-    protected void onCreate() {
-        if (this.status == null) {
-            this.status = TaskStatus.PENDENTE;
-        }
-    }
 
 }
