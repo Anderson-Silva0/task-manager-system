@@ -91,8 +91,8 @@ class TaskControllerImplIntegrationTest {
         mockMvc.perform(get("/api/tasks"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
-                .andExpect(jsonPath("$[0].title").value("Tarefa 1"))
-                .andExpect(jsonPath("$[1].title").value("Tarefa 2"));
+                .andExpect(jsonPath("$[1].title").value("Tarefa 1"))
+                .andExpect(jsonPath("$[0].title").value("Tarefa 2"));
     }
 
     @Test

@@ -6,6 +6,7 @@ import com.andersonsilva.taskservice.application.service.ITaskService;
 import com.andersonsilva.taskservice.domain.TaskEntity;
 import com.andersonsilva.taskservice.domain.TaskStatus;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,9 +17,9 @@ import java.util.List;
 public class TaskServiceImpl implements ITaskService {
 
     private final TaskRepository repository;
-
     private final UserClient userClient;
 
+    @Autowired
     public TaskServiceImpl(TaskRepository repository, UserClient userClient) {
         this.repository = repository;
         this.userClient = userClient;
@@ -26,15 +27,7 @@ public class TaskServiceImpl implements ITaskService {
 
     @Override
     public List<TaskEntity> findTasksByStatusAndUserId(TaskStatus status, Long userId) {
-        if (status != null && userId != null) {
-            return repository.findByStatusAndUserId(status, userId);
-        } else if (status != null) {
-            return repository.findByStatus(status);
-        } else if (userId != null) {
-            return repository.findByUserId(userId);
-        } else {
-            return repository.findAll();
-        }
+        return repository.findTasks(status, userId);
     }
 
     @Override
@@ -59,6 +52,7 @@ public class TaskServiceImpl implements ITaskService {
                 .status(TaskStatus.PENDENTE)
                 .deadline(deadline)
                 .build();
+
         return repository.save(task);
     }
 

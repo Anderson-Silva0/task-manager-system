@@ -50,19 +50,19 @@ class TaskServiceImplTest {
     @Test
     @DisplayName("Listar todas as tarefas sem filtros")
     void listAllTasksWithoutFilters() {
-        when(repository.findAll()).thenReturn(List.of(taskEntity));
+        when(repository.findTasks(any(), any())).thenReturn(List.of(taskEntity));
         var resultado = service.findTasksByStatusAndUserId(null, null);
         assertEquals(1, resultado.size());
-        verify(repository).findAll();
+        verify(repository).findTasks(any(), any());
     }
 
     @Test
     @DisplayName("Listar tarefas por status e usuário")
     void listTasksByStatusAndUserId() {
-        when(repository.findByStatusAndUserId(TaskStatus.PENDENTE, 1L)).thenReturn(List.of(taskEntity));
+        when(repository.findTasks(eq(TaskStatus.PENDENTE), eq(1L))).thenReturn(List.of(taskEntity));
         var resultado = service.findTasksByStatusAndUserId(TaskStatus.PENDENTE, 1L);
         assertEquals(1, resultado.size());
-        verify(repository).findByStatusAndUserId(TaskStatus.PENDENTE, 1L);
+        verify(repository).findTasks(eq(TaskStatus.PENDENTE), eq(1L));
     }
 
     @Test
