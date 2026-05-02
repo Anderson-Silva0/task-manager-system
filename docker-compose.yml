@@ -11,7 +11,7 @@ services:
     volumes:
       - user-db-data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d userdb"]
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d userdb" ]
       interval: 10s
       timeout: 10s
       retries: 10
@@ -29,7 +29,7 @@ services:
     volumes:
       - task-db-data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d taskdb"]
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d taskdb" ]
       interval: 10s
       timeout: 10s
       retries: 10
@@ -54,7 +54,7 @@ services:
       postgres-user:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/api/users"]
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/api/users" ]
       interval: 30s
       timeout: 20s
       retries: 5
@@ -81,7 +81,7 @@ services:
       user-service:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/api/tasks"]
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/api/tasks" ]
       interval: 30s
       timeout: 20s
       retries: 5
@@ -103,12 +103,12 @@ services:
       - ./task-manager-ui/package.json:/app/package.json
       - ./task-manager-ui/angular.json:/app/angular.json
       - ./task-manager-ui/tsconfig.json:/app/tsconfig.json
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:4200"]
-      interval: 10s
-      timeout: 5s
-      retries: 10
-      start_period: 60s
+    # healthcheck:
+    #   test: ["CMD-SHELL", "curl -s http://localhost:4200 || exit 1"]
+    #   interval: 10s
+    #   timeout: 5s
+    #   retries: 20
+    #   start_period: 120s
     depends_on:
       task-service:
         condition: service_healthy
@@ -123,12 +123,9 @@ services:
       dockerfile: Dockerfile.cypress
     container_name: cypress-tests
     depends_on:
-      task-manager-ui:
-        condition: service_healthy
-      task-service:
-        condition: service_healthy
-      user-service:
-        condition: service_healthy
+      - task-manager-ui
+      - task-service
+      - user-service
     environment:
       - CYPRESS_baseUrl=http://task-manager-ui:4200
     volumes:
@@ -137,7 +134,22 @@ services:
       - ./task-manager-ui/cypress-results:/app/cypress-results
     networks:
       - backend
-    command: sh -c "npx wait-on -t 120000 http://task-manager-ui:4200 && npx wait-on -t 60000 http://user-service:8080 && npx wait-on -t 60000 http://task-service:8080 && sleep 15 && npx cypress run --spec 'cypress/e2e/**/*.cy.js' --reporter junit --reporter-options 'mochaFile=cypress-results/results.xml,toConsole=true'"
+    command: >
+      sh -c "
+      echo 'Aguardando Angular...' &&
+      npx wait-on -t 180000 http://task-manager-ui:4200 &&
+
+      echo 'Aguardando user-service...' &&
+      npx wait-on -t 120000 http://user-service:8080/api/users &&
+
+      echo 'Aguardando task-service...' &&
+      npx wait-on -t 120000 http://task-service:8080/api/tasks &&
+
+      echo 'Rodando Cypress...' &&
+      npx cypress run --spec 'cypress/e2e/**/*.cy.js' \
+      --reporter junit \
+      --reporter-options 'mochaFile=cypress-results/results.xml,toConsole=true'
+      "
 
 volumes:
   user-db-data:
